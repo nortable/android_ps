@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">美图编辑器</string>
+    
+    <!-- Home Activity -->
+    <string name="banner_title">让这个圣诞，拼出彩</string>
+    <string name="banner_subtitle">全新拼图功能，留下每一个高光时刻</string>
+    <string name="banner_button">立即查看</string>
+    <string name="ai_color">AI追色</string>
+    <string name="camera_sim">相机模拟</string>
+    <string name="effects">特效</string>
+    <string name="collage">拼图</string>
+    <string name="photos">照片</string>
+    <string name="projects">项目</string>
+    
+    <!-- Edit Activity -->
+    <string name="ai_create">去创意</string>
+    <string name="export">导出</string>
+    <string name="full_image">全图</string>
+    <string name="realtime_color">实时调色</string>
+    <string name="my_tab">我的</string>
+    <string name="recommend_tab">推荐</string>
+    <string name="ai_color_adjust">AI色彩调节</string>
+    <string name="filter">滤镜</string>
+    <string name="white_balance">白平衡</string>
+    <string name="shadow">影调</string>
+    <string name="free">Free</string>
+</resources>
