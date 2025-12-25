@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:padding="8dp"
+    android:background="@color/dark_gray"
+    android:layout_marginBottom="2dp">
+
+    <!-- 项目缩略图 -->
+    <ImageView
+        android:id="@+id/project_thumbnail"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:background="@color/gray"/>
+
+    <!-- 项目信息 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/project_thumbnail"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/project_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="编辑项目"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/project_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="刚刚"
+            android:textColor="@color/gray_text"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/project_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="编辑中"
+            android:textColor="@color/yellow"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <!-- 重新编辑按钮 -->
+    <TextView
+        android:id="@+id/btn_reedit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:text="→"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:padding="8dp"/>
+
+</RelativeLayout>
+

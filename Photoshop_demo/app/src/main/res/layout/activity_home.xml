@@ -181,81 +181,51 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="照片"
-            android:textColor="@color/white"
+            android:textColor="@color/gray_text"
             android:textSize="18sp"
-            android:textStyle="bold"
             android:paddingBottom="8dp"
-            android:layout_marginEnd="30dp"/>
+            android:layout_marginEnd="30dp"
+            android:clickable="true"
+            android:focusable="true"/>
 
         <TextView
             android:id="@+id/tab_projects"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="项目"
-            android:textColor="@color/gray_text"
-            android:textSize="18sp"/>
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"/>
 
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1"/>
 
-        <!-- 筛选和排序图标 -->
+        <!-- 添加新项目按钮 -->
         <TextView
-            android:id="@+id/btn_filter"
+            android:id="@+id/btn_add_project"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="⚑"
+            android:text="+"
             android:textColor="@color/white"
-            android:textSize="20sp"
-            android:layout_marginEnd="16dp"/>
-
-        <TextView
-            android:id="@+id/btn_sort"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="↕"
-            android:textColor="@color/white"
-            android:textSize="20sp"/>
+            android:textSize="24sp"
+            android:padding="4dp"
+            android:clickable="true"
+            android:focusable="true"/>
 
     </LinearLayout>
 
-    <!-- 日期标题 -->
-    <TextView
-        android:id="@+id/date_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tab_container"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        android:text="2025年12月24日"
-        android:textColor="@color/gray_text"
-        android:textSize="14sp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tab_container"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:text="5"
-        android:textColor="@color/gray_text"
-        android:textSize="14sp"/>
-
-    <!-- 照片网格 -->
-    <GridView
-        android:id="@+id/photos_grid"
+    <!-- 项目列表 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/projects_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/date_title"
+        android:layout_below="@id/tab_container"
         android:layout_marginTop="16dp"
-        android:numColumns="2"
-        android:horizontalSpacing="2dp"
-        android:verticalSpacing="2dp"
-        android:stretchMode="columnWidth"
-        android:gravity="center"
-        android:padding="2dp"/>
+        android:padding="8dp"/>
 
 </RelativeLayout>
 

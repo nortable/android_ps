@@ -97,12 +97,14 @@
         android:layout_above="@id/bottom_panel"
         android:background="@color/dark_gray">
 
-        <!-- 占位图片 -->
-        <View
+        <!-- 实际显示的图片 -->
+        <ImageView
+            android:id="@+id/image_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="16dp"
-            android:background="@color/gray"/>
+            android:scaleType="fitCenter"
+            android:background="@color/black"/>
 
         <!-- 全图按钮 -->
         <TextView

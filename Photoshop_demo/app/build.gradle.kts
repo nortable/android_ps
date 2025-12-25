@@ -34,6 +34,10 @@ android {
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
+    
+    // Gson - JSON解析库，用于保存项目数据
+    implementation("com.google.code.gson:gson:2.10.1")
+    
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
