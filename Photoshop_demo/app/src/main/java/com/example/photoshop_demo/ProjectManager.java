@@ -100,6 +100,16 @@ public class ProjectManager {
             }
         }
     }
+    
+    /**
+     * 恢复项目（撤销删除）
+     */
+    public void restoreProject(EditProject project) {
+        List<EditProject> projects = getAllProjects();
+        // 添加到列表开头
+        projects.add(0, project);
+        saveProjects(projects);
+    }
 }
 
 

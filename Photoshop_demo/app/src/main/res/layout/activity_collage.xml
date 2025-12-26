@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 拼图Activity布局 -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+    
+    <!-- 顶部工具栏 -->
+    <LinearLayout
+        android:id="@+id/top_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:background="#1A1A1A">
+        
+        <TextView
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="←"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:paddingEnd="16dp"
+            android:paddingVertical="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="拼图"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"/>
+        
+        <TextView
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="保存"
+            android:textColor="#FFD700"
+            android:textSize="16sp"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+    </LinearLayout>
+    
+    <!-- 拼图预览区域 -->
+    <FrameLayout
+        android:id="@+id/preview_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_toolbar"
+        android:layout_above="@id/bottom_panel"
+        android:padding="20dp">
+        
+        <ImageView
+            android:id="@+id/collage_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"/>
+            
+    </FrameLayout>
+    
+    <!-- 底部控制面板 -->
+    <LinearLayout
+        android:id="@+id/bottom_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:background="#1A1A1A"
+        android:paddingVertical="16dp">
+        
+        <!-- 模板选择标题 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择布局"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="8dp"/>
+        
+        <!-- 模板列表 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/template_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:paddingHorizontal="12dp"
+            android:clipToPadding="false"/>
+        
+        <!-- 边框宽度控制 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="12dp"
+            android:gravity="center_vertical">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="边框宽度"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:layout_marginEnd="16dp"/>
+            
+            <SeekBar
+                android:id="@+id/seekbar_spacing"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="20"
+                android:progress="4"
+                android:progressTint="#FFD700"
+                android:thumbTint="#FFD700"/>
+            
+            <TextView
+                android:id="@+id/text_spacing_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4px"
+                android:textColor="#FFD700"
+                android:textSize="14sp"
+                android:layout_marginStart="12dp"
+                android:minWidth="40dp"
+                android:gravity="end"/>
+        </LinearLayout>
+        
+        <!-- 背景色选择 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="8dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="背景色"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:paddingBottom="8dp"/>
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+                
+                <!-- 白色 -->
+                <View
+                    android:id="@+id/color_white"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/color_selector_bg"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                
+                <!-- 黑色 -->
+                <View
+                    android:id="@+id/color_black"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/color_selector_bg"
+                    android:backgroundTint="#000000"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                
+                <!-- 灰色 -->
+                <View
+                    android:id="@+id/color_gray"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/color_selector_bg"
+                    android:backgroundTint="#808080"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                
+                <!-- 红色 -->
+                <View
+                    android:id="@+id/color_red"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/color_selector_bg"
+                    android:backgroundTint="#FF0000"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                
+                <!-- 蓝色 -->
+                <View
+                    android:id="@+id/color_blue"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/color_selector_bg"
+                    android:backgroundTint="#0000FF"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                
+                <!-- 金色 -->
+                <View
+                    android:id="@+id/color_gold"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/color_selector_bg"
+                    android:backgroundTint="#FFD700"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
+        </LinearLayout>
+        
+    </LinearLayout>
+    
+</RelativeLayout>
+

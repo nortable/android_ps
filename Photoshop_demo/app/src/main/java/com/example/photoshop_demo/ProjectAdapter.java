@@ -27,9 +27,14 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
     private Context context;
     private List<EditProject> projects;
     private OnProjectClickListener listener;
+    private OnProjectDeleteListener deleteListener;
 
     public interface OnProjectClickListener {
         void onProjectClick(EditProject project);
+    }
+    
+    public interface OnProjectDeleteListener {
+        void onProjectDelete(EditProject project, int position);
     }
 
     public ProjectAdapter(Context context, List<EditProject> projects) {
@@ -39,6 +44,10 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
 
     public void setOnProjectClickListener(OnProjectClickListener listener) {
         this.listener = listener;
+    }
+    
+    public void setOnProjectDeleteListener(OnProjectDeleteListener listener) {
+        this.deleteListener = listener;
     }
 
     @NonNull
@@ -63,6 +72,34 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
         this.projects = newProjects;
         notifyDataSetChanged();
     }
+    
+    /**
+     * 删除项目
+     */
+    public void deleteProject(int position) {
+        if (position >= 0 && position < projects.size()) {
+            EditProject project = projects.get(position);
+            
+            // 从列表移除
+            projects.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, projects.size());
+            
+            // 通知HomeActivity处理删除逻辑
+            if (deleteListener != null) {
+                deleteListener.onProjectDelete(project, position);
+            }
+        }
+    }
+    
+    /**
+     * 恢复项目（撤销删除用）
+     */
+    public void restoreProject(EditProject project, int position) {
+        projects.add(position, project);
+        notifyItemInserted(position);
+        notifyItemRangeChanged(position, projects.size());
+    }
 
     class ProjectViewHolder extends RecyclerView.ViewHolder {
         ImageView thumbnail;
@@ -84,8 +121,10 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
             // 加载缩略图
             loadThumbnail(project);
 
-            // 设置项目名称
-            projectName.setText("编辑项目 #" + project.getProjectId().substring(8, 13));
+            // 设置项目名称（使用ID的后5位作为编号，确保唯一性）
+            String projectId = project.getProjectId();
+            String displayNumber = projectId.substring(Math.max(0, projectId.length() - 5));
+            projectName.setText("编辑项目 #" + displayNumber);
 
             // 设置时间
             projectTime.setText(formatTime(project.getLastEditTime()));

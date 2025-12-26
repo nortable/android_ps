@@ -10,6 +10,10 @@
     <!-- 写入权限（Android 9 及以下需要） -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
+    
+    <!-- 相机权限 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -35,6 +39,22 @@
         <activity
             android:name=".EditActivity"
             android:exported="false" />
+        
+        <!-- Collage Activity - 拼图页 -->
+        <activity
+            android:name=".CollageActivity"
+            android:exported="false" />
+        
+        <!-- FileProvider - 用于相机拍照 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.photoshop_demo.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
         
     </application>
 
