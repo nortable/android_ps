@@ -89,7 +89,7 @@
     </LinearLayout>
 
     <!-- 图片显示区域 -->
-    <RelativeLayout
+    <FrameLayout
         android:id="@+id/image_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -106,58 +106,15 @@
             android:scaleType="fitCenter"
             android:background="@color/black"/>
 
-        <!-- 全图按钮 -->
-        <TextView
-            android:id="@+id/btn_full_image"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="全图 ▼"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:paddingHorizontal="16dp"
-            android:background="@drawable/rounded_button_dark_bg"/>
+        <!-- 裁切遮罩层（初始隐藏） -->
+        <com.example.photoshop_demo.CropOverlayView
+            android:id="@+id/crop_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            android:visibility="gone"/>
 
-        <!-- 实时调色开关 -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="12dp"
-            android:background="@drawable/rounded_button_dark_bg">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="❓"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:layout_marginEnd="8dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="实时调色"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:layout_marginEnd="8dp"/>
-
-            <View
-                android:layout_width="40dp"
-                android:layout_height="20dp"
-                android:background="@color/blue"/>
-
-        </LinearLayout>
-
-    </RelativeLayout>
+    </FrameLayout>
 
     <!-- 底部面板 -->
     <LinearLayout
@@ -166,184 +123,122 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
-        android:background="@color/dark_background">
+        android:background="#000000">
 
-        <!-- 标签栏 -->
-        <LinearLayout
+        <!-- 编辑工具面板容器（调整、裁切、旋转面板） -->
+        <FrameLayout
+            android:id="@+id/edit_panel_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="8dp">
-
-            <TextView
-                android:id="@+id/tab_my"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="我的"
-                android:textColor="@color/gray_text"
-                android:textSize="14sp"
-                android:paddingEnd="24dp"/>
-
-            <TextView
-                android:id="@+id/tab_recommend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="推荐"
-                android:textColor="@color/white"
-                android:textSize="14sp"/>
-
-        </LinearLayout>
-
-        <!-- 分类标签 -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:paddingBottom="12dp">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingHorizontal="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🚫"
-                    android:textSize="20sp"
-                    android:paddingEnd="16dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="写真"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:paddingHorizontal="12dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="儿童"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:paddingHorizontal="12dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="风景"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:paddingHorizontal="12dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="婚纱"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:paddingHorizontal="12dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="婚礼跟拍"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:paddingHorizontal="12dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="油画"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:paddingHorizontal="12dp"/>
-
-            </LinearLayout>
-
-        </HorizontalScrollView>
+            android:background="#1A1A1A">
+            
+            <!-- 调整面板 -->
+            <include layout="@layout/panel_adjust"/>
+            
+            <!-- 裁切面板 -->
+            <include layout="@layout/panel_crop"/>
+            
+            <!-- 旋转面板 -->
+            <include layout="@layout/panel_rotate"/>
+            
+        </FrameLayout>
 
         <!-- 底部工具栏 -->
         <LinearLayout
             android:id="@+id/bottom_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="90dp"
             android:orientation="horizontal"
             android:gravity="center"
-            android:paddingHorizontal="8dp"
-            android:background="@color/black">
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="8dp"
+            android:background="#000000">
 
-            <!-- 返回按钮 -->
+            <!-- 裁切 -->
             <LinearLayout
+                android:id="@+id/btn_tool_crop"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:gravity="center">
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="4dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="←"
-                    android:textColor="@color/white"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="✂️"
+                    android:gravity="center"
                     android:textSize="24sp"/>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="裁切"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    android:layout_marginTop="2dp"/>
+
             </LinearLayout>
 
-            <!-- AI色彩调节 -->
+            <!-- 调整 -->
             <LinearLayout
-                android:id="@+id/btn_tool_color_adjust"
+                android:id="@+id/btn_tool_adjust"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:padding="4dp">
 
-                <View
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@color/gray"/>
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="🎨"
+                    android:gravity="center"
+                    android:textSize="24sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="AI色彩调节"
+                    android:text="调整"
                     android:textColor="@color/white"
-                    android:textSize="10sp"
-                    android:layout_marginTop="4dp"/>
+                    android:textSize="11sp"
+                    android:layout_marginTop="2dp"/>
 
             </LinearLayout>
 
-            <!-- AI追色 -->
+            <!-- 旋转 -->
             <LinearLayout
-                android:id="@+id/btn_tool_ai_color"
+                android:id="@+id/btn_tool_rotate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:padding="4dp">
 
-                <View
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@color/gray"/>
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="↻"
+                    android:gravity="center"
+                    android:textSize="32sp"
+                    android:textColor="@color/white"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="AI追色"
+                    android:text="旋转"
                     android:textColor="@color/white"
-                    android:textSize="10sp"
-                    android:layout_marginTop="4dp"/>
+                    android:textSize="11sp"
+                    android:layout_marginTop="2dp"/>
 
             </LinearLayout>
 
@@ -356,93 +251,52 @@
                 android:orientation="vertical"
                 android:gravity="center"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:padding="4dp">
 
-                <View
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@color/gray"/>
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="🌈"
+                    android:gravity="center"
+                    android:textSize="24sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="滤镜"
                     android:textColor="@color/white"
-                    android:textSize="10sp"
-                    android:layout_marginTop="4dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Free"
-                    android:textColor="@color/gray_text"
-                    android:textSize="8sp"/>
+                    android:textSize="11sp"
+                    android:layout_marginTop="2dp"/>
 
             </LinearLayout>
 
-            <!-- 白平衡 -->
+            <!-- 美化 -->
             <LinearLayout
-                android:id="@+id/btn_tool_balance"
+                android:id="@+id/btn_tool_beautify"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:padding="4dp">
 
-                <View
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@color/gray"/>
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="✨"
+                    android:gravity="center"
+                    android:textSize="24sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="白平衡"
+                    android:text="美化"
                     android:textColor="@color/white"
-                    android:textSize="10sp"
-                    android:layout_marginTop="4dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Free"
-                    android:textColor="@color/gray_text"
-                    android:textSize="8sp"/>
-
-            </LinearLayout>
-
-            <!-- 影调 -->
-            <LinearLayout
-                android:id="@+id/btn_tool_shadow"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true">
-
-                <View
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@color/gray"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="影调"
-                    android:textColor="@color/white"
-                    android:textSize="10sp"
-                    android:layout_marginTop="4dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Free"
-                    android:textColor="@color/gray_text"
-                    android:textSize="8sp"/>
+                    android:textSize="11sp"
+                    android:layout_marginTop="2dp"/>
 
             </LinearLayout>
 

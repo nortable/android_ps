@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 裁切面板 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/crop_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#1A1A1A"
+    android:visibility="gone">
+    
+    <!-- 标题 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="裁切"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+    
+    <!-- 裁切比例选项 -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_marginBottom="16dp">
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            
+            <TextView
+                android:id="@+id/btn_crop_free"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="自由"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/rounded_button_dark_bg"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"/>
+            
+            <TextView
+                android:id="@+id/btn_crop_1_1"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="1:1"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/rounded_button_dark_bg"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"/>
+            
+            <TextView
+                android:id="@+id/btn_crop_4_3"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="4:3"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/rounded_button_dark_bg"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"/>
+            
+            <TextView
+                android:id="@+id/btn_crop_16_9"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="16:9"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/rounded_button_dark_bg"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"/>
+            
+            <TextView
+                android:id="@+id/btn_crop_3_2"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="3:2"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/rounded_button_dark_bg"
+                android:clickable="true"
+                android:focusable="true"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+    
+    <!-- 控制按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+        
+        <Button
+            android:id="@+id/btn_crop_cancel"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="取消"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:background="@drawable/rounded_button_dark_bg"
+            android:layout_marginEnd="8dp"/>
+        
+        <Button
+            android:id="@+id/btn_crop_done"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="完成"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:background="#FFD700"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+    
+</LinearLayout>
+

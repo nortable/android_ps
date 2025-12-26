@@ -239,3 +239,4 @@ currentBitmap.recycle();  // 手动释放Bitmap内存
 
 **有任何问题随时询问！** 🚀
 
+
