@@ -20,8 +20,13 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.example.photoshop_demo.filter.*;
+import com.example.photoshop_demo.beautify.*;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * 编辑页Activity - 完整版
@@ -46,6 +51,8 @@ public class EditActivity extends AppCompatActivity {
     private ViewGroup adjustPanel;
     private ViewGroup cropPanel;
     private ViewGroup rotatePanel;
+    private ViewGroup filterPanel;
+    private ViewGroup beautifyPanel;
     
     // 调整面板控件
     private SeekBar seekBarBrightness;
@@ -64,13 +71,32 @@ public class EditActivity extends AppCompatActivity {
     // 撤销/重做管理
     private EditHistory editHistory;
     
+    // 滤镜相关
+    private RecyclerView filterRecyclerView;
+    private LutFilterAdapter filterAdapter;
+    private SeekBar seekBarFilterIntensity;
+    private TextView textFilterIntensity;
+    private LutFilter currentFilter;
+    private float currentFilterIntensity = 0.8f;
+    
+    // 美化相关
+    private SeekBar seekBarBeautifyIntensity;
+    private TextView textBeautifyIntensity;
+    private TextView textCurrentEffect;
+    private BeautifyEffect currentBeautifyEffect = BeautifyEffect.AUTO_ENHANCE;
+    private float currentBeautifyIntensity = 0.8f;
+    
     // 防抖Handler
     private Handler previewHandler = new Handler(Looper.getMainLooper());
     private Runnable previewRunnable;
+    private Handler filterHandler = new Handler(Looper.getMainLooper());
+    private Runnable filterPreviewRunnable;
+    private Handler beautifyHandler = new Handler(Looper.getMainLooper());
+    private Runnable beautifyPreviewRunnable;
     
     // 当前模式
     private enum EditMode {
-        NONE, ADJUST, CROP, ROTATE
+        NONE, ADJUST, CROP, ROTATE, FILTER, BEAUTIFY
     }
     private EditMode currentMode = EditMode.NONE;
 
@@ -89,6 +115,11 @@ public class EditActivity extends AppCompatActivity {
         setupAdjustPanel();
         setupCropPanel();
         setupRotatePanel();
+        setupFilterPanel();
+        setupBeautifyPanel();
+        
+        // 预加载LUT
+        LutFilterManager.getInstance(this).preloadLuts();
     }
 
     /**
@@ -101,6 +132,8 @@ public class EditActivity extends AppCompatActivity {
         adjustPanel = findViewById(R.id.adjust_panel);
         cropPanel = findViewById(R.id.crop_panel);
         rotatePanel = findViewById(R.id.rotate_panel);
+        filterPanel = findViewById(R.id.filter_panel);
+        beautifyPanel = findViewById(R.id.beautify_panel);
         
         // 调整面板控件
         seekBarBrightness = findViewById(R.id.seekbar_brightness);
@@ -193,12 +226,10 @@ public class EditActivity extends AppCompatActivity {
         findViewById(R.id.btn_tool_rotate).setOnClickListener(v -> showRotatePanel());
         
         // 滤镜按钮
-        findViewById(R.id.btn_tool_filter).setOnClickListener(v -> 
-            Toast.makeText(this, "滤镜功能开发中", Toast.LENGTH_SHORT).show());
+        findViewById(R.id.btn_tool_filter).setOnClickListener(v -> showFilterPanel());
         
         // 美化按钮
-        findViewById(R.id.btn_tool_beautify).setOnClickListener(v -> 
-            Toast.makeText(this, "美化功能开发中", Toast.LENGTH_SHORT).show());
+        findViewById(R.id.btn_tool_beautify).setOnClickListener(v -> showBeautifyPanel());
     }
 
     /**
@@ -436,10 +467,13 @@ public class EditActivity extends AppCompatActivity {
         adjustPanel.setVisibility(View.GONE);
         cropPanel.setVisibility(View.GONE);
         rotatePanel.setVisibility(View.GONE);
+        filterPanel.setVisibility(View.GONE);
+        beautifyPanel.setVisibility(View.GONE);
         cropOverlay.setVisibility(View.GONE);
         
         // 清除预览效果
         imageView.setColorFilter(null);
+        imageView.setImageBitmap(currentBitmap);
         
         currentMode = EditMode.NONE;
     }
@@ -814,6 +848,350 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 设置滤镜面板
+     */
+    private void setupFilterPanel() {
+        filterRecyclerView = findViewById(R.id.filter_recycler_view);
+        seekBarFilterIntensity = findViewById(R.id.seekbar_filter_intensity);
+        textFilterIntensity = findViewById(R.id.text_filter_intensity);
+        
+        // 设置RecyclerView
+        LinearLayoutManager layoutManager = new LinearLayoutManager(
+            this, LinearLayoutManager.HORIZONTAL, false);
+        filterRecyclerView.setLayoutManager(layoutManager);
+        
+        // 创建预览缩略图（使用缩小的图片）
+        Bitmap preview = Bitmap.createScaledBitmap(currentBitmap, 200, 200, true);
+        
+        // 设置适配器
+        List<LutFilter> filters = LutFilterManager.getInstance(this).getAllFilters();
+        filterAdapter = new LutFilterAdapter(filters, preview);
+        filterAdapter.setOnFilterSelectedListener((filter, position) -> {
+            currentFilter = filter;
+            seekBarFilterIntensity.setProgress(filter.getDefaultIntensity());
+            previewFilterDebounced();
+        });
+        filterRecyclerView.setAdapter(filterAdapter);
+        
+        // 强度滑块
+        seekBarFilterIntensity.setOnSeekBarChangeListener(
+            new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    currentFilterIntensity = progress / 100.0f;
+                    textFilterIntensity.setText(progress + "%");
+                    previewFilterDebounced();
+                }
+                
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {}
+                
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {}
+            });
+        
+        // 关闭按钮
+        findViewById(R.id.btn_filter_close).setOnClickListener(v -> hideFilterPanel());
+        
+        // 重置按钮
+        findViewById(R.id.btn_filter_reset).setOnClickListener(v -> resetFilter());
+        
+        // 应用按钮
+        findViewById(R.id.btn_filter_apply).setOnClickListener(v -> applyFilterToImage());
+    }
+    
+    /**
+     * 显示滤镜面板
+     */
+    private void showFilterPanel() {
+        hideAllPanels();
+        currentMode = EditMode.FILTER;
+        filterPanel.setVisibility(View.VISIBLE);
+        
+        // 默认选中原图
+        currentFilter = LutFilterManager.getInstance(this).getAllFilters().get(0);
+    }
+    
+    /**
+     * 隐藏滤镜面板
+     */
+    private void hideFilterPanel() {
+        filterPanel.setVisibility(View.GONE);
+        imageView.setImageBitmap(currentBitmap);  // 恢复原图显示
+        currentMode = EditMode.NONE;
+    }
+    
+    /**
+     * 预览滤镜（防抖）
+     */
+    private void previewFilterDebounced() {
+        if (filterPreviewRunnable != null) {
+            filterHandler.removeCallbacks(filterPreviewRunnable);
+        }
+        filterPreviewRunnable = this::previewFilter;
+        filterHandler.postDelayed(filterPreviewRunnable, 50);
+    }
+    
+    /**
+     * 预览滤镜效果
+     */
+    private void previewFilter() {
+        if (currentFilter == null) return;
+        
+        // 原图滤镜直接显示原图
+        if (currentFilter.getId().equals("identity")) {
+            imageView.setImageBitmap(currentBitmap);
+            return;
+        }
+        
+        // 在后台线程生成预览
+        new Thread(() -> {
+            Bitmap preview = LutFilterManager.getInstance(this)
+                .applyFilter(currentBitmap, currentFilter, currentFilterIntensity);
+            
+            runOnUiThread(() -> {
+                imageView.setImageBitmap(preview);
+            });
+        }).start();
+    }
+    
+    /**
+     * 重置滤镜
+     */
+    private void resetFilter() {
+        currentFilter = LutFilterManager.getInstance(this).getAllFilters().get(0);
+        currentFilterIntensity = 0.8f;
+        seekBarFilterIntensity.setProgress(80);
+        filterAdapter.resetSelection();
+        imageView.setImageBitmap(currentBitmap);
+        Toast.makeText(this, "已重置", Toast.LENGTH_SHORT).show();
+    }
+    
+    /**
+     * 应用滤镜到实际Bitmap
+     */
+    private void applyFilterToImage() {
+        if (currentFilter == null || currentFilter.getId().equals("identity")) {
+            Toast.makeText(this, "未选择滤镜", Toast.LENGTH_SHORT).show();
+            hideFilterPanel();
+            return;
+        }
+        
+        Toast.makeText(this, "正在处理...", Toast.LENGTH_SHORT).show();
+        
+        new Thread(() -> {
+            Bitmap filtered = LutFilterManager.getInstance(this)
+                .applyFilter(currentBitmap, currentFilter, currentFilterIntensity);
+            
+            runOnUiThread(() -> {
+                // 保存到历史
+                editHistory.pushState(currentBitmap);
+                
+                // 释放旧Bitmap
+                if (currentBitmap != originalBitmap && !currentBitmap.isRecycled()) {
+                    currentBitmap.recycle();
+                }
+                
+                // 更新当前Bitmap
+                currentBitmap = filtered;
+                imageView.setImageBitmap(currentBitmap);
+                
+                hideFilterPanel();
+                Toast.makeText(this, "滤镜已应用", Toast.LENGTH_SHORT).show();
+            });
+        }).start();
+    }
+
+    /**
+     * 设置美化面板
+     */
+    private void setupBeautifyPanel() {
+        seekBarBeautifyIntensity = findViewById(R.id.seekbar_beautify_intensity);
+        textBeautifyIntensity = findViewById(R.id.text_beautify_intensity);
+        textCurrentEffect = findViewById(R.id.text_current_effect);
+        
+        // 3个美化效果按钮
+        View btnAutoEnhance = findViewById(R.id.btn_auto_enhance);
+        View btnSharpen = findViewById(R.id.btn_sharpen);
+        View btnVignette = findViewById(R.id.btn_vignette);
+        
+        // 设置点击事件
+        btnAutoEnhance.setOnClickListener(v -> selectBeautifyEffect(BeautifyEffect.AUTO_ENHANCE, btnAutoEnhance, btnSharpen, btnVignette));
+        btnSharpen.setOnClickListener(v -> selectBeautifyEffect(BeautifyEffect.SHARPEN, btnSharpen, btnAutoEnhance, btnVignette));
+        btnVignette.setOnClickListener(v -> selectBeautifyEffect(BeautifyEffect.VIGNETTE, btnVignette, btnAutoEnhance, btnSharpen));
+        
+        // 强度滑块
+        seekBarBeautifyIntensity.setOnSeekBarChangeListener(
+            new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    currentBeautifyIntensity = progress / 100.0f;
+                    textBeautifyIntensity.setText(progress + "%");
+                    previewBeautifyDebounced();
+                }
+                
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {}
+                
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {}
+            });
+        
+        // 关闭按钮
+        findViewById(R.id.btn_beautify_close).setOnClickListener(v -> hideBeautifyPanel());
+        
+        // 重置按钮
+        findViewById(R.id.btn_beautify_reset).setOnClickListener(v -> resetBeautify());
+        
+        // 应用按钮
+        findViewById(R.id.btn_beautify_apply).setOnClickListener(v -> applyBeautifyToImage());
+    }
+    
+    /**
+     * 显示美化面板
+     */
+    private void showBeautifyPanel() {
+        hideAllPanels();
+        currentMode = EditMode.BEAUTIFY;
+        beautifyPanel.setVisibility(View.VISIBLE);
+        
+        // 默认选中自动增强
+        currentBeautifyEffect = BeautifyEffect.AUTO_ENHANCE;
+        currentBeautifyIntensity = BeautifyEffect.AUTO_ENHANCE.getDefaultIntensity();
+        
+        // 更新UI
+        View btnAutoEnhance = findViewById(R.id.btn_auto_enhance);
+        View btnSharpen = findViewById(R.id.btn_sharpen);
+        View btnVignette = findViewById(R.id.btn_vignette);
+        
+        btnAutoEnhance.setSelected(true);
+        btnSharpen.setSelected(false);
+        btnVignette.setSelected(false);
+        
+        seekBarBeautifyIntensity.setProgress(currentBeautifyEffect.getDefaultIntensityPercent());
+        textCurrentEffect.setText("当前效果：" + currentBeautifyEffect.getName());
+        
+        // 自动预览
+        previewBeautify();
+    }
+    
+    /**
+     * 隐藏美化面板
+     */
+    private void hideBeautifyPanel() {
+        beautifyPanel.setVisibility(View.GONE);
+        imageView.setImageBitmap(currentBitmap);
+        currentMode = EditMode.NONE;
+    }
+    
+    /**
+     * 选择美化效果
+     */
+    private void selectBeautifyEffect(BeautifyEffect effect, View selectedBtn, View... otherBtns) {
+        currentBeautifyEffect = effect;
+        currentBeautifyIntensity = effect.getDefaultIntensity();
+        
+        // 更新按钮选中状态
+        selectedBtn.setSelected(true);
+        for (View btn : otherBtns) {
+            btn.setSelected(false);
+        }
+        
+        // 更新滑块和文本
+        seekBarBeautifyIntensity.setProgress(effect.getDefaultIntensityPercent());
+        textCurrentEffect.setText("当前效果：" + effect.getName());
+        
+        // 预览效果
+        previewBeautify();
+    }
+    
+    /**
+     * 预览美化效果（防抖）
+     */
+    private void previewBeautifyDebounced() {
+        if (beautifyPreviewRunnable != null) {
+            beautifyHandler.removeCallbacks(beautifyPreviewRunnable);
+        }
+        beautifyPreviewRunnable = this::previewBeautify;
+        beautifyHandler.postDelayed(beautifyPreviewRunnable, 50);
+    }
+    
+    /**
+     * 预览美化效果
+     */
+    private void previewBeautify() {
+        if (currentBeautifyEffect == null) return;
+        
+        // 在后台线程生成预览
+        new Thread(() -> {
+            Bitmap preview = BeautifyManager.applyEffect(
+                currentBitmap, currentBeautifyEffect, currentBeautifyIntensity);
+            
+            runOnUiThread(() -> {
+                imageView.setImageBitmap(preview);
+            });
+        }).start();
+    }
+    
+    /**
+     * 重置美化
+     */
+    private void resetBeautify() {
+        currentBeautifyEffect = BeautifyEffect.AUTO_ENHANCE;
+        currentBeautifyIntensity = BeautifyEffect.AUTO_ENHANCE.getDefaultIntensity();
+        
+        // 重置UI
+        View btnAutoEnhance = findViewById(R.id.btn_auto_enhance);
+        View btnSharpen = findViewById(R.id.btn_sharpen);
+        View btnVignette = findViewById(R.id.btn_vignette);
+        
+        btnAutoEnhance.setSelected(true);
+        btnSharpen.setSelected(false);
+        btnVignette.setSelected(false);
+        
+        seekBarBeautifyIntensity.setProgress(80);
+        textCurrentEffect.setText("当前效果：自动增强");
+        
+        imageView.setImageBitmap(currentBitmap);
+        Toast.makeText(this, "已重置", Toast.LENGTH_SHORT).show();
+    }
+    
+    /**
+     * 应用美化到实际Bitmap
+     */
+    private void applyBeautifyToImage() {
+        if (currentBeautifyEffect == null) {
+            Toast.makeText(this, "请选择美化效果", Toast.LENGTH_SHORT).show();
+            hideBeautifyPanel();
+            return;
+        }
+        
+        Toast.makeText(this, "正在处理...", Toast.LENGTH_SHORT).show();
+        
+        new Thread(() -> {
+            Bitmap beautified = BeautifyManager.applyEffect(
+                currentBitmap, currentBeautifyEffect, currentBeautifyIntensity);
+            
+            runOnUiThread(() -> {
+                // 保存到历史
+                editHistory.pushState(currentBitmap);
+                
+                // 释放旧Bitmap
+                if (currentBitmap != originalBitmap && !currentBitmap.isRecycled()) {
+                    currentBitmap.recycle();
+                }
+                
+                // 更新当前Bitmap
+                currentBitmap = beautified;
+                imageView.setImageBitmap(currentBitmap);
+                
+                hideBeautifyPanel();
+                Toast.makeText(this, "美化已应用", Toast.LENGTH_SHORT).show();
+            });
+        }).start();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -831,9 +1209,20 @@ public class EditActivity extends AppCompatActivity {
             editHistory.clear();
         }
         
+        // 释放滤镜适配器缓存
+        if (filterAdapter != null) {
+            filterAdapter.releaseCache();
+        }
+        
         // 移除Handler回调
         if (previewHandler != null && previewRunnable != null) {
             previewHandler.removeCallbacks(previewRunnable);
+        }
+        if (filterHandler != null && filterPreviewRunnable != null) {
+            filterHandler.removeCallbacks(filterPreviewRunnable);
+        }
+        if (beautifyHandler != null && beautifyPreviewRunnable != null) {
+            beautifyHandler.removeCallbacks(beautifyPreviewRunnable);
         }
     }
 }

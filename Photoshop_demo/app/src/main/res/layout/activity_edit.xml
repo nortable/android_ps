@@ -125,7 +125,7 @@
         android:orientation="vertical"
         android:background="#000000">
 
-        <!-- 编辑工具面板容器（调整、裁切、旋转面板） -->
+        <!-- 编辑工具面板容器（调整、裁切、旋转、滤镜面板） -->
         <FrameLayout
             android:id="@+id/edit_panel_container"
             android:layout_width="match_parent"
@@ -140,6 +140,12 @@
             
             <!-- 旋转面板 -->
             <include layout="@layout/panel_rotate"/>
+            
+            <!-- 滤镜面板 -->
+            <include layout="@layout/panel_filter"/>
+            
+            <!-- 美化面板 -->
+            <include layout="@layout/panel_beautify"/>
             
         </FrameLayout>
 

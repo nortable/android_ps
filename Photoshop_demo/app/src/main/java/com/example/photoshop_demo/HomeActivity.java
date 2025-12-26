@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.photoshop_demo.filter.LutGeneratorHelper;
 import java.util.List;
 
 /**
@@ -56,6 +57,10 @@ public class HomeActivity extends AppCompatActivity {
         
         // 加载项目列表
         loadProjects();
+        
+        // 临时：生成LUT文件（仅开发时使用）
+        // 注意：运行一次后请注释掉这行代码！
+        // LutGeneratorHelper.generateAndSaveAllLuts(this);
     }
 
     /**

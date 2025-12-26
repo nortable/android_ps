@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 美化面板 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/beautify_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#1A1A1A"
+    android:visibility="gone">
+    
+    <!-- 顶部标题栏 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingHorizontal="16dp"
+        android:gravity="center_vertical">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="美化"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"/>
+        
+        <TextView
+            android:id="@+id/btn_beautify_close"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="✕"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+    </RelativeLayout>
+    
+    <!-- 3个美化效果按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:gravity="center">
+        
+        <!-- 自动增强 -->
+        <LinearLayout
+            android:id="@+id/btn_auto_enhance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="12dp"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/beautify_button_bg">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚡"
+                android:textSize="32sp"/>
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="自动增强"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"/>
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="推荐"
+                android:textColor="#FFD700"
+                android:textSize="10sp"
+                android:layout_marginTop="2dp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+        
+        <!-- 锐化 -->
+        <LinearLayout
+            android:id="@+id/btn_sharpen"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="12dp"
+            android:layout_marginHorizontal="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/beautify_button_bg">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔍"
+                android:textSize="32sp"/>
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="锐化"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"/>
+            
+            <!-- 占位，保持对齐 -->
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="14dp"/>
+        </LinearLayout>
+        
+        <!-- 暗角 -->
+        <LinearLayout
+            android:id="@+id/btn_vignette"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="12dp"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/beautify_button_bg">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎭"
+                android:textSize="32sp"/>
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="暗角"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"/>
+            
+            <!-- 占位，保持对齐 -->
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="14dp"/>
+        </LinearLayout>
+    </LinearLayout>
+    
+    <!-- 当前效果显示 -->
+    <TextView
+        android:id="@+id/text_current_effect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="当前效果：自动增强"
+        android:textColor="#999999"
+        android:textSize="13sp"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="8dp"
+        android:background="#252525"/>
+    
+    <!-- 强度调节区域 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="12dp"
+        android:background="#252525">
+        
+        <!-- 强度标签 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+            
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="强度"
+                android:textColor="@color/white"
+                android:textSize="14sp"/>
+            
+            <TextView
+                android:id="@+id/text_beautify_intensity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="80%"
+                android:textColor="#FFD700"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+        
+        <!-- 强度滑块 -->
+        <SeekBar
+            android:id="@+id/seekbar_beautify_intensity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="80"
+            android:progressTint="#FFD700"
+            android:thumbTint="#FFD700"/>
+    </LinearLayout>
+    
+    <!-- 底部操作按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center">
+        
+        <Button
+            android:id="@+id/btn_beautify_reset"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="重置"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:background="@drawable/rounded_button_dark_bg"
+            android:layout_marginEnd="8dp"/>
+        
+        <Button
+            android:id="@+id/btn_beautify_apply"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="应用"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:background="#FFD700"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+    
+</LinearLayout>
+
