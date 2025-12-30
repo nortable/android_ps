@@ -5,11 +5,42 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
+    <!-- 用户状态栏（顶部独立） -->
+    <LinearLayout
+        android:id="@+id/layout_user_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            android:id="@+id/text_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="登录"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:layout_marginEnd="8dp" />
+
+        <View
+            android:id="@+id/view_avatar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/circle_button_bg" />
+    </LinearLayout>
+
     <!-- 顶部圣诞主题横幅 -->
     <RelativeLayout
         android:id="@+id/banner_container"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:layout_below="@id/layout_user_status"
         android:background="@color/christmas_red"
         android:padding="20dp">
 
