@@ -19,6 +19,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 import com.example.photoshop_demo.filter.LutGeneratorHelper;
+import com.example.photoshop_demo.auth.SessionManager;
+import com.example.photoshop_demo.auth.User;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.PopupMenu;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -52,6 +58,11 @@ public class HomeActivity extends AppCompatActivity {
     // RecyclerView
     private RecyclerView projectsRecycler;
     
+    // 用户会话管理器
+    private SessionManager sessionManager;
+    private LinearLayout layoutUserStatus;
+    private TextView textUsername;
+    
     // 当前操作类型
     private enum ActionType {
         EDIT_IMAGE, TAKE_PHOTO, COLLAGE
@@ -65,6 +76,12 @@ public class HomeActivity extends AppCompatActivity {
 
         // 初始化项目管理器
         projectManager = new ProjectManager(this);
+        
+        // 初始化会话管理器
+        sessionManager = new SessionManager(this);
+
+        // 初始化用户状态UI
+        setupUserStatus();
 
         // 初始化权限和图片选择器
         setupPermissionLauncher();
@@ -265,10 +282,7 @@ public class HomeActivity extends AppCompatActivity {
      * 设置标签切换
      */
     private void setupTabs() {
-        findViewById(R.id.tab_photos).setOnClickListener(v -> {
-            Toast.makeText(this, "照片功能开发中", Toast.LENGTH_SHORT).show();
-        });
-
+        // 只保留项目标签（照片功能已删除）
         findViewById(R.id.tab_projects).setOnClickListener(v -> {
             // 已经在项目列表页
             loadProjects();
@@ -439,6 +453,80 @@ public class HomeActivity extends AppCompatActivity {
             .setActionTextColor(getColor(R.color.yellow))
             .show();
     }
+    
+    /**
+     * 初始化用户状态UI
+     */
+    private void setupUserStatus() {
+        layoutUserStatus = findViewById(R.id.layout_user_status);
+        textUsername = findViewById(R.id.text_username);
+        
+        // 更新用户状态显示
+        updateUserStatus();
+        
+        // 设置点击监听
+        layoutUserStatus.setOnClickListener(v -> {
+            if (sessionManager.isLoggedIn()) {
+                // 已登录，显示用户菜单
+                showUserMenu();
+            } else {
+                // 未登录，跳转到登录页
+                navigateToLogin();
+            }
+        });
+    }
+    
+    /**
+     * 更新用户状态显示
+     */
+    private void updateUserStatus() {
+        if (sessionManager.isLoggedIn()) {
+            User currentUser = sessionManager.getCurrentUser();
+            if (currentUser != null) {
+                textUsername.setText(currentUser.getUsername());
+            }
+        } else {
+            textUsername.setText("登录");
+        }
+    }
+    
+    /**
+     * 显示用户菜单
+     */
+    private void showUserMenu() {
+        PopupMenu popup = new PopupMenu(this, layoutUserStatus);
+        
+        // 添加菜单项
+        popup.getMenu().add(0, 1, 1, "个人中心");
+        popup.getMenu().add(0, 2, 2, "退出登录");
+        
+        popup.setOnMenuItemClickListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == 1) {
+                // 跳转到个人中心
+                Intent intent = new Intent(this, ProfileActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == 2) {
+                // 退出登录
+                sessionManager.logout();
+                updateUserStatus();
+                Toast.makeText(this, "已退出登录", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            return false;
+        });
+        
+        popup.show();
+    }
+    
+    /**
+     * 跳转到登录页
+     */
+    private void navigateToLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
 
     /**
      * 加载项目列表
@@ -453,5 +541,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
         // 从编辑页返回时刷新项目列表
         loadProjects();
+        // 页面恢复时更新用户状态
+        updateUserStatus();
     }
 }

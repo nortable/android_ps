@@ -45,6 +45,21 @@
             android:name=".CollageActivity"
             android:exported="false" />
         
+        <!-- Login Activity - 登录页 -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+        
+        <!-- Register Activity - 注册页 -->
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
+        
+        <!-- Profile Activity - 个人中心 -->
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        
         <!-- FileProvider - 用于相机拍照 -->
         <provider
             android:name="androidx.core.content.FileProvider"

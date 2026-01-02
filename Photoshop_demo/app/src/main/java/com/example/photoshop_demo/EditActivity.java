@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.photoshop_demo.filter.*;
 import com.example.photoshop_demo.beautify.*;
+import com.example.photoshop_demo.auth.AuthGuard;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -905,6 +906,11 @@ public class EditActivity extends AppCompatActivity {
      * 显示滤镜面板
      */
     private void showFilterPanel() {
+        // 权限检查：需要登录才能使用滤镜功能
+        if (!AuthGuard.requireLogin(this, "滤镜")) {
+            return; // 未登录，显示登录提示后返回
+        }
+        
         hideAllPanels();
         currentMode = EditMode.FILTER;
         filterPanel.setVisibility(View.VISIBLE);
